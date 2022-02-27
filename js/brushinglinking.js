@@ -3,6 +3,12 @@ const margin = { top: 50, right: 50, bottom: 50, left: 200 };
 const width = 900; //- margin.left - margin.right;
 const height = 650; //- margin.top - margin.bottom;
 
+const bardata = [
+  {Species: 'setosa', score: 50},
+  {Species: 'versicolor', score: 50},
+  {Species: 'virginica', score: 50}
+];
+
 // Append svg object to the body of the page to house Scatterplot1
 const svg1 = d3.select("#vis-holder")
                 .append("svg")
@@ -27,7 +33,7 @@ let brush2;
 let myCircles2; 
 
 //TODO: append svg object to the body of the page to house bar chart 
-const bar = d3.select("#vis-holder")
+const svg3 = d3.select("#vis-holder")
                 .append("svg")
                 .attr("width", width - margin.left - margin.right)
                 .attr("height", height - margin.top - margin.bottom)
@@ -178,7 +184,39 @@ d3.csv("data/iris.csv").then((data) => {
 
   //TODO: Barchart with counts of different species
   {
-    // Bar chart code here 
+    maxY1 = d3.max(bardata, function(d) { return d.score; });
+
+    y1 = d3.scaleLinear()
+            .domain([0,maxY1])
+            .range([height-margin.bottom,margin.top]); 
+
+    x1 = d3.scaleBand()
+            .domain(d3.range(bardata.length))
+            .range([margin.left, width - margin.right])
+            .padding(0.1); 
+
+    svg3.append("g")
+   .attr("transform", `translate(${margin.left}, 0)`) 
+   .call(d3.axisLeft(y1)) 
+   .attr("font-size", '20px'); 
+
+    svg3.append("g")
+    .attr("transform", `translate(0,${height - margin.bottom})`) 
+    .call(d3.axisBottom(x1) 
+            .tickFormat(d => bardata[d].Species))  
+    .attr("font-size", '20px'); 
+
+    svg3.selectAll(".bar") 
+   .data(bardata) 
+   .enter()  
+   .append("rect") 
+     .attr("class", "bar") 
+     .attr("x", (d,i) => x1(i)) 
+     .attr("y", (d) => y1(d.score)) 
+     .attr("height", (d) => (height - margin.bottom) - y1(d.score)) 
+     .attr("width", x1.bandwidth())
+     .style("fill", (d) => color(d.Species))
+     .style("opacity", 0.5);
   }
 
   //Brushing Code---------------------------------------------------------------------------------------------
