@@ -117,6 +117,9 @@ d3.csv("data/iris.csv").then((data) => {
                               .style("opacity", 0.5);
 
     //TODO: Define a brush (call it brush1)
+    d3.select("svg1")
+      .call( d3.brush()     
+        .extent( [ [0,0], [width,height] ] ));
 
     //TODO: Add brush1 to svg1
     
