@@ -40,7 +40,7 @@ const svg3 = d3.select("#vis-holder")
                 .attr("viewBox", [0,0, width, height]); 
 
 //TODO: Initialize bars. We will need these to be global. 
-let brush3;  
+let brush3; 
 let myRectangles; 
 
 // Define color scale
