@@ -118,7 +118,62 @@ d3.csv("data/iris.csv").then((data) => {
 
   //TODO: Scatterplot 2 (show Sepal width on x-axis and Petal width on y-axis)
   {
-    // Scatterplot2 code here 
+    xKey1 = "Sepal_Width";
+    yKey1 = "Petal_Width";
+
+    // Find max x
+    maxX1 = d3.max(data, (d) => { return d[xKey1]; });
+
+    // Create X scale
+    x1 = d3.scaleLinear()
+                .domain([0,maxX1])
+                .range([margin.left, width-margin.right]); 
+    
+    // Add x axis 
+    svg2.append("g")
+        .attr("transform", `translate(0,${height - margin.bottom})`) 
+        .call(d3.axisBottom(x1))   
+        .attr("font-size", '20px')
+        .call((g) => g.append("text")
+                      .attr("x", width - margin.right)
+                      .attr("y", margin.bottom - 4)
+                      .attr("fill", "black")
+                      .attr("text-anchor", "end")
+                      .text(xKey1)
+      );
+
+    // Finx max y 
+    maxY1 = d3.max(data, (d) => { return d[yKey1]; });
+
+    // Create Y scale
+    y1 = d3.scaleLinear()
+                .domain([0, maxY1])
+                .range([height - margin.bottom, margin.top]); 
+
+    // Add y axis 
+    svg2.append("g")
+        .attr("transform", `translate(${margin.left}, 0)`) 
+        .call(d3.axisLeft(y1)) 
+        .attr("font-size", '20px') 
+        .call((g) => g.append("text")
+                      .attr("x", 0)
+                      .attr("y", margin.top)
+                      .attr("fill", "black")
+                      .attr("text-anchor", "end")
+                      .text(yKey1)
+      );
+
+    // Add points
+    const myCircles2 = svg2.selectAll("circle")
+                            .data(data)
+                            .enter()
+                              .append("circle")
+                              .attr("id", (d) => d.id)
+                              .attr("cx", (d) => x1(d[xKey1]))
+                              .attr("cy", (d) => y1(d[yKey1]))
+                              .attr("r", 8)
+                              .style("fill", (d) => color(d.Species))
+                              .style("opacity", 0.5);
   }
 
   //TODO: Barchart with counts of different species
