@@ -117,12 +117,12 @@ d3.csv("data/iris.csv").then((data) => {
                               .style("opacity", 0.5);
 
     //TODO: Define a brush (call it brush1)
-    d3.select("svg1")
-      .call( d3.brush()     
-        .extent( [ [0,0], [width,height] ] ));
+brush1 = d3.brush();
 
     //TODO: Add brush1 to svg1
-    
+svg1.append("g")
+    .attr("class", "brush")
+    .call(brush1.on("start brush", updateChart1));
   }
 
   //TODO: Scatterplot 2 (show Sepal width on x-axis and Petal width on y-axis)
@@ -233,7 +233,9 @@ d3.csv("data/iris.csv").then((data) => {
 
   // Call when Scatterplot1 is brushed 
   function updateChart1(brushEvent) {
-      
+      extent = brushEvent.selection
+      console.log(extent);
+      myCircles1.classed("selected", function(d){ return isBrushed(extent, x(d.Sepal_Length), y(d.Petal_Length) ) } )
       //TODO: Find coordinates of brushed region 
   
       //TODO: Give bold outline to all points within the brush region in Scatterplot1
@@ -261,7 +263,7 @@ d3.csv("data/iris.csv").then((data) => {
     function isBrushed(brush_coords, cx, cy) {
       if (brush_coords === null) return;
 
-      var x0 = brush_coords[0][0],
+      let x0 = brush_coords[0][0],
         x1 = brush_coords[1][0],
         y0 = brush_coords[0][1],
         y1 = brush_coords[1][1];
