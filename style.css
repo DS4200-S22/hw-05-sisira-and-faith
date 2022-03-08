@@ -1,10 +1,10 @@
 
-body {
-  font-family: Arial;
-}
-
 .selected {
   opacity: 1 !important;
   stroke: black;
-  stroke-width: 1px;
+  stroke-width: 2px;
+}
+
+body {
+  font-family: Arial;
 }
