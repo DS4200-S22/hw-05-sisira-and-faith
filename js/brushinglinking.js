@@ -3,23 +3,26 @@ const margin = { top: 50, right: 50, bottom: 50, left: 200 };
 const width = 900; //- margin.left - margin.right;
 const height = 650; //- margin.top - margin.bottom;
 
+//Data to be plotted on bar chart, specifying iris flower species and their respective distributions
 const bardata = [
   {Species: 'setosa', score: 50},
   {Species: 'versicolor', score: 50},
   {Species: 'virginica', score: 50}
 ];
 
-//Append svg object to the body of the page to house Scatterplot1
+//Create space for the first scatterplot on the page
 const svg1 = d3.select("#vis-holder")
                 .append("svg")
                 .attr("width", width - margin.left - margin.right)
                 .attr("height", height - margin.top - margin.bottom)
                 .attr("viewBox", [0, 0, width, height]); 
 
+//initializes the brush for the first scatterplot
 let brush1; 
+//initializes points for the first scatterplot
 let myCircles1; 
 
-//append svg object to the body of the page to house Scatterplot2 (call it svg2)
+//creates space on the page to hold the second scatterplot
 const svg2 = d3.select("#vis-holder")
                 .append("svg")
                 .attr("width", width - margin.left - margin.right)
@@ -29,7 +32,7 @@ const svg2 = d3.select("#vis-holder")
 let brush2; 
 let myCircles2; 
 
-//append svg object to the body of the page to house bar chart 
+//creates space on the page to hold the bar chart
 const svg3 = d3.select("#vis-holder")
                 .append("svg")
                 .attr("width", width - margin.left - margin.right)
@@ -37,9 +40,10 @@ const svg3 = d3.select("#vis-holder")
                 .attr("viewBox", [0,0, width, height]); 
 
 let brush3; 
+//initializes bars for bar chart
 let myRectangles; 
 
-// Define color scale
+// Defines color scale based on the species of the flower
 const color = d3.scaleOrdinal()
                 .domain(["setosa", "versicolor", "virginica"])
                 .range(["#FF7F50", "#21908dff", "#fde725ff"]);
@@ -53,19 +57,20 @@ d3.csv("data/iris.csv").then((data) => {
   //global keys for charts
   let xKey1, yKey1, xKey2, yKey2, xKey3, yKey3;
 
-  // Scatterplot1
+  // constructs Scatterplot1, a graph plotting petal length vs. sepal length for different species of iris flowers
   {
     xKey1 = "Sepal_Length";
     yKey1 = "Petal_Length";
 
+    //sets max sepal length value 
     let maxX1 = d3.max(data, (d) => { return d[xKey1]; });
 
-    // Create X scale for svg1
+    // creates linear x-axis scale for sepal length
     x1 = d3.scaleLinear()
                 .domain([0,maxX1])
                 .range([margin.left, width-margin.right]); 
     
-    // Add x axis to svg1
+    // adds x-axis to Scatterplot 1
     svg1.append("g")
         .attr("transform", `translate(0,${height - margin.bottom})`) 
         .call(d3.axisBottom(x1))   
@@ -78,14 +83,15 @@ d3.csv("data/iris.csv").then((data) => {
                       .text(xKey1)
       );
 
+    //sets max petal length value 
     let maxY1 = d3.max(data, (d) => { return d[yKey1]; });
 
-    // Create Y scale for svg1
+    // creates linear y-axis scale for petal length
     y1 = d3.scaleLinear()
                 .domain([0, maxY1])
                 .range([height - margin.bottom, margin.top]); 
 
-    // Add y axis to svg1
+    // adds y-axis to Scatterplot 1
     svg1.append("g")
         .attr("transform", `translate(${margin.left}, 0)`) 
         .call(d3.axisLeft(y1)) 
@@ -98,7 +104,7 @@ d3.csv("data/iris.csv").then((data) => {
                       .text(yKey1)
       );
 
-    // Add points to svg1
+    // generates the flower data points to plot on Scatterplot 1
     myCircles1 = svg1.selectAll("circle")
                             .data(data)
                             .enter()
@@ -110,31 +116,32 @@ d3.csv("data/iris.csv").then((data) => {
                               .style("fill", (d) => color(d.Species))
                               .style("opacity", 0.5);
 
-    //creates brush for svg1
+    //creates brush for Scatterplot1 
     brush1 = d3.brush()
     .extent([[0,0], [width, height]])
     .on("brush", updateChart1)
     .on("start", clear);
 
-    //Add brush1 to svg1
+    //adds brush to Scatterplot 1
     svg1.append("g")
     .attr("class", "brush")
     .call(brush1);
   }
 
-  //scatterplot 2
+  // constructs Scatterplot 2, a graph plotting petal width vs. sepal width for different species of iris flowers
   {
     xKey2 = "Sepal_Width";
     yKey2 = "Petal_Width";
 
+    //sets max sepal width value 
     maxX2 = d3.max(data, (d) => { return d[xKey2]; });
 
-    // Create X scale for svg2
+    // creates linear x-axis scale for sepal width
     x2 = d3.scaleLinear()
                 .domain([0,maxX2])
                 .range([margin.left, width-margin.right]); 
     
-    // Add x axis to svg2
+    // adds x-axis to Scatterplot 2
     svg2.append("g")
         .attr("transform", `translate(0,${height - margin.bottom})`) 
         .call(d3.axisBottom(x2))   
@@ -147,14 +154,15 @@ d3.csv("data/iris.csv").then((data) => {
                       .text(xKey2)
       );
 
+    //sets max petal width value
     maxY2 = d3.max(data, (d) => { return d[yKey2]; });
 
-    // Create Y scale for svg2
+    // creates y-axis for Scatterplot 2
     y2 = d3.scaleLinear()
                 .domain([0, maxY2])
                 .range([height - margin.bottom, margin.top]); 
 
-    // Add y axis to svg2
+    // Add y-axis to Scatterplot 2
     svg2.append("g")
         .attr("transform", `translate(${margin.left}, 0)`) 
         .call(d3.axisLeft(y2)) 
@@ -167,7 +175,7 @@ d3.csv("data/iris.csv").then((data) => {
                       .text(yKey2)
       );
 
-    // Add points to svg2
+    // generates the flower data points to plot on Scatterplot 2
     myCircles2 = svg2.selectAll("circle")
                             .data(data)
                             .enter()
@@ -179,37 +187,38 @@ d3.csv("data/iris.csv").then((data) => {
                               .style("fill", (d) => color(d.Species))
                               .style("opacity", 0.5);
 
-    //creates the brush for svg2
+    //creates a brush for Scatterplot 2
     brush2 = d3.brush()
      .extent([[0,0], [width, height]])
      .on("brush", updateChart2)
      .on("start", clear);
  
-    //Add brush2 to svg2
+    //adds the brush to Scatterplot 2
     svg2.append("g")
      .attr("class", "brush")
      .call(brush2);
   }
 
-  //bar chart
+  //constructs a bar chart that depicts the distributions of different species of iris flowers in given data
   {
     xKey3 = "Species";
     yKey3 = "Count";
 
+    //sets max count of the irises
     maxY3 = d3.max(bardata, function(d) { return d.score; });
 
-    //scale of y axis
+    // creates y-axis scale for bar chart
     y3 = d3.scaleLinear()
             .domain([0,maxY3])
             .range([height-margin.bottom,margin.top]); 
 
-    //scale of x axis
+    // creates x-axis scale for bar chart
     x3 = d3.scaleBand()
             .domain(d3.range(bardata.length))
             .range([margin.left, width - margin.right])
             .padding(0.1); 
 
-    //adds the y axis to the bar chart
+    //adds y-axis to the bar chart
     svg3.append("g")
    .attr("transform", `translate(${margin.left}, 0)`) 
    .call(d3.axisLeft(y3)) 
@@ -222,7 +231,7 @@ d3.csv("data/iris.csv").then((data) => {
                       .text(yKey3)
    );
 
-    //adds bar chart x axis
+    //adds x-axis to the bar chart
     svg3.append("g")
     .attr("transform", `translate(0,${height - margin.bottom})`) 
     .call(d3.axisBottom(x3) 
@@ -236,7 +245,7 @@ d3.csv("data/iris.csv").then((data) => {
                       .text(xKey3)
     );
 
-    //adds bars to bar chart
+    // generates the bars indicating iris species' distribution to be added to the bar chart
     myRectangles = svg3.selectAll(".bar") 
                         .data(bardata) 
                         .enter()  
@@ -252,37 +261,45 @@ d3.csv("data/iris.csv").then((data) => {
 
   //Brushing Code---------------------------------------------------------------------------------------------
     
-  //clears the brush from the graph not currently being brushed
+  //Clears the brush from the graph not currently being brushed
   function clear() {
       svg1.call(brush1.move, null);
 
       svg2.call(brush2.move, null);
     }
 
-  //takes in user input for brush selection, highlights selected points and bars
+  //Takes in user input for brush selection, highlights selected points and bars
   function updateChart1(brushEvent) {
+      //the area of the brush drawn by the user
       let extent = brushEvent.selection;
 
+      //sets the points that fall under the area of the brushed selection in Scatterplot 1 to have highlighted, bold outlines
       myCircles1.classed("selected", function(d){ return isBrushed(extent, x1(d[xKey1]), y1(d[yKey1]) ) } )
   
+      //sets it so that points brushed on Scatterplot 1 will reflect on Scatterplot 2
       myCircles2.classed("selected", function(d){ return isBrushed(extent, x1(d[xKey1]), y1(d[yKey1]) ) } )
     }
 
-  //takes in user input for brush selection, highlights selected points and bars
+  //Takes in user input for brush selection, highlights selected points and bars
   function updateChart2(brushEvent) {
     let extent = brushEvent.selection;
 
+    //an empty Set to add the species of irises that fall under the brush selection of points 
     let brushedSpecies = new Set();
     
+    //sets the points that fall under the area of the brushed selection in Scatterplot 2 to have highlighted, bold outlines
     myCircles2.classed("selected", function(d)
     { 
       if( isBrushed(extent, x2(d[xKey2]), y2(d[yKey2]))) {
+        //adds the iris species selected from the brushed area to a Set
         brushedSpecies.add(d.Species);
         return true;
       } } )
 
+    //sets it so that points brushed on Scatterplot 2 will reflect on Scatterplot 1
     myCircles1.classed("selected", function(d){ return isBrushed(extent, x2(d[xKey2]), y2(d[yKey2]) ) } )
 
+    //sets it so that points brushed on Scatterplot 2 will have the according bars (indicating species) highlighted on the bar chart
     myRectangles.classed("selected", function(d){
       return brushedSpecies.has(d.Species)} )
   }
